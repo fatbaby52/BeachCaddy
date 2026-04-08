@@ -172,7 +172,7 @@ export default function HomePage() {
       <Header transparent />
       <main id="main-content" className="overflow-hidden">
         {/* Hero Section - Editorial Style */}
-        <section className="relative min-h-[100svh] -mt-16">
+        <section className="relative min-h-[100svh] -mt-16 bg-ocean-900">
           {/* Background Image - eager load for LCP */}
           <div className="absolute inset-0">
             <img

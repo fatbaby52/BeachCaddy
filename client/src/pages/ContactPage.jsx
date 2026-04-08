@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Header, MobileNav } from '../components/layout'
 import { Button } from '../components/common'
-import { Mail, Phone, MapPin, Send, Check } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, Check, AlertCircle } from 'lucide-react'
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState(null)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,10 +14,32 @@ export default function ContactPage() {
     message: ''
   })
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // In production, this would send to an API
-    setSubmitted(true)
+    setIsSubmitting(true)
+    setError(null)
+
+    try {
+      // Submit to Netlify Forms
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          'form-name': 'contact',
+          ...formData
+        }).toString()
+      })
+
+      if (response.ok) {
+        setSubmitted(true)
+      } else {
+        throw new Error('Form submission failed')
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again or email us directly.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e) => {
@@ -95,7 +119,29 @@ export default function ContactPage() {
                   <p className="text-warm-600">We'll get back to you within 24 hours.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form
+                  name="contact"
+                  method="POST"
+                  data-netlify="true"
+                  netlify-honeypot="bot-field"
+                  onSubmit={handleSubmit}
+                  className="space-y-4"
+                >
+                  {/* Hidden fields for Netlify */}
+                  <input type="hidden" name="form-name" value="contact" />
+                  <p className="hidden">
+                    <label>
+                      Don't fill this out: <input name="bot-field" />
+                    </label>
+                  </p>
+
+                  {error && (
+                    <div className="flex items-center gap-2 p-3 bg-coral-50 border border-coral-200 text-coral-700 text-sm rounded">
+                      <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                      {error}
+                    </div>
+                  )}
+
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-ocean-800 mb-2">
                       Name <span className="text-coral-500">*</span>
@@ -155,7 +201,7 @@ export default function ContactPage() {
                     />
                   </div>
 
-                  <Button type="submit" fullWidth>
+                  <Button type="submit" fullWidth loading={isSubmitting}>
                     <Send className="w-4 h-4 mr-2" />
                     Send Message
                   </Button>

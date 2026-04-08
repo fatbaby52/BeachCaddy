@@ -1,22 +1,22 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo, useCallback, memo } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Check, Star, MapPin, Frown, Smile } from 'lucide-react'
 import { Header, MobileNav } from '../components/layout'
 import { Button } from '../components/common'
 import { formatCurrency } from '../utils/helpers'
 
-// Stress-Free Meter Component
-function StressFreeMeter({ animated }) {
-  const progress = animated ? 85 : 0 // 85% towards stress-free
+// Stress-Free Meter Component - memoized
+const StressFreeMeter = memo(function StressFreeMeter({ animated }) {
+  const progress = animated ? 85 : 0
 
   return (
     <div className="relative">
       {/* Meter Track */}
       <div className="relative h-4 bg-sand-200 overflow-hidden">
-        {/* Animated Fill */}
+        {/* Animated Fill - use transform for GPU acceleration */}
         <div
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-coral-400 via-sunset-400 to-ocean-500 transition-all duration-[2000ms] ease-out"
-          style={{ width: `${progress}%` }}
+          className="absolute inset-y-0 left-0 right-0 bg-gradient-to-r from-coral-400 via-sunset-400 to-ocean-500 transition-transform duration-[2000ms] ease-out origin-left"
+          style={{ transform: `scaleX(${progress / 100})` }}
         />
         {/* Tick marks */}
         <div className="absolute inset-0 flex justify-between px-1">
@@ -38,28 +38,34 @@ function StressFreeMeter({ animated }) {
         </div>
       </div>
 
-      {/* Needle/Indicator */}
+      {/* Needle/Indicator - use transform only for GPU acceleration */}
       <div
-        className="absolute -top-2 transition-all duration-[2000ms] ease-out"
-        style={{ left: `${progress}%`, transform: 'translateX(-50%)' }}
+        className="absolute -top-2 transition-transform duration-[2000ms] ease-out"
+        style={{ transform: `translateX(calc(${progress}vw * 0.85 - 50%))`, left: 0 }}
       >
-        <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[12px] border-l-transparent border-r-transparent border-t-ocean-700" />
+        <div
+          className="transition-transform duration-[2000ms] ease-out"
+          style={{ transform: `translateX(${progress * 6.4}px)` }}
+        >
+          <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[12px] border-l-transparent border-r-transparent border-t-ocean-700" />
+        </div>
       </div>
     </div>
   )
-}
+})
 
-// Real beach images from Unsplash
+// Real beach images from Unsplash - optimized URLs with dimensions
 const IMAGES = {
-  hero: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80',
-  heroSecondary: 'https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&q=80',
-  beachSetup: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&q=80',
-  couples: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=800&q=80',
-  family: 'https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=800&q=80',
-  luxury: 'https://images.unsplash.com/photo-1520454974749-611b7248ffdb?w=800&q=80',
-  testimonial: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80',
+  hero: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&h=900&fit=crop&q=80',
+  heroSecondary: 'https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&h=1000&fit=crop&q=80',
+  beachSetup: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&h=750&fit=crop&q=80',
+  couples: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=600&h=750&fit=crop&q=80',
+  family: 'https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=600&h=750&fit=crop&q=80',
+  luxury: 'https://images.unsplash.com/photo-1520454974749-611b7248ffdb?w=1600&h=600&fit=crop&q=80',
+  testimonial: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=112&h=112&fit=crop&q=80',
 }
 
+// Static data - defined outside component to prevent recreation
 const featuredPackages = [
   {
     id: '1',
@@ -85,6 +91,51 @@ const featuredPackages = [
   },
 ]
 
+const beaches = ['Seacliff State Beach', 'Sunset State Beach', 'Manresa State Beach', 'Rio Del Mar', 'Capitola']
+
+const steps = [
+  { num: '01', title: 'Choose your beach & time', desc: 'We serve the best spots on the coast' },
+  { num: '02', title: 'Pick your setup', desc: 'From basic essentials to full luxury' },
+  { num: '03', title: 'Show up and chill', desc: "Everything's ready when you arrive" },
+]
+
+// Memoized Package Card
+const PackageCard = memo(function PackageCard({ pkg, loaded, delay }) {
+  return (
+    <Link
+      to="/packages"
+      className={`group block opacity-0 ${loaded ? 'animate-fade-in-up' : ''}`}
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      <div className="relative overflow-hidden mb-4 aspect-[4/5]">
+        <img
+          src={pkg.image}
+          alt={pkg.name}
+          width={600}
+          height={750}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        {pkg.tag && (
+          <span className="absolute top-4 left-4 badge badge-coral">
+            {pkg.tag}
+          </span>
+        )}
+      </div>
+      <div className="flex items-start justify-between mb-2">
+        <h3 className="text-xl font-medium text-ocean-800 group-hover:text-ocean-600 transition-colors">
+          {pkg.name}
+        </h3>
+        <span className="text-xl font-medium text-ocean-600">
+          {formatCurrency(pkg.price)}
+        </span>
+      </div>
+      <p className="text-warm-600 text-sm">{pkg.description}</p>
+    </Link>
+  )
+})
+
 export default function HomePage() {
   const [loaded, setLoaded] = useState(false)
   const [meterAnimated, setMeterAnimated] = useState(false)
@@ -94,23 +145,26 @@ export default function HomePage() {
     setLoaded(true)
   }, [])
 
+  // Memoized intersection observer callback
+  const handleIntersection = useCallback(([entry]) => {
+    if (entry.isIntersecting) {
+      setMeterAnimated(true)
+    }
+  }, [])
+
   // Intersection observer for meter animation
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setMeterAnimated(true)
-        }
-      },
-      { threshold: 0.5 }
-    )
+    const observer = new IntersectionObserver(handleIntersection, { threshold: 0.5 })
 
     if (meterRef.current) {
       observer.observe(meterRef.current)
     }
 
     return () => observer.disconnect()
-  }, [])
+  }, [handleIntersection])
+
+  // Memoize current year to prevent recalculation
+  const currentYear = useMemo(() => new Date().getFullYear(), [])
 
   return (
     <>
@@ -118,11 +172,16 @@ export default function HomePage() {
       <main id="main-content" className="overflow-hidden">
         {/* Hero Section - Editorial Style */}
         <section className="relative min-h-[100svh] -mt-16">
-          {/* Background Image */}
+          {/* Background Image - eager load for LCP */}
           <div className="absolute inset-0">
             <img
               src={IMAGES.hero}
               alt="Beautiful sandy beach with crystal clear water"
+              width={1600}
+              height={900}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-ocean-900/80 via-ocean-900/20 to-transparent" />
@@ -189,11 +248,7 @@ export default function HomePage() {
                 <div className="divider mb-8" />
 
                 <div className="space-y-8">
-                  {[
-                    { num: '01', title: 'Choose your beach & time', desc: 'We serve the best spots on the coast' },
-                    { num: '02', title: 'Pick your setup', desc: 'From basic essentials to full luxury' },
-                    { num: '03', title: 'Show up and chill', desc: "Everything's ready when you arrive" },
-                  ].map((step, i) => (
+                  {steps.map((step, i) => (
                     <div key={i} className="flex gap-6">
                       <span className="text-4xl font-light text-sand-300">{step.num}</span>
                       <div>
@@ -206,11 +261,17 @@ export default function HomePage() {
               </div>
 
               <div className="relative">
-                <img
-                  src={IMAGES.heroSecondary}
-                  alt="Beach setup with umbrella and chairs"
-                  className="w-full aspect-[4/5] object-cover"
-                />
+                <div className="aspect-[4/5]">
+                  <img
+                    src={IMAGES.heroSecondary}
+                    alt="Beach setup with umbrella and chairs"
+                    width={800}
+                    height={1000}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 {/* Stats overlay */}
                 <div className="absolute -bottom-8 -left-4 md:-left-8 bg-white p-6 shadow-dramatic">
                   <p className="text-5xl font-light text-ocean-700 mb-1">2.5h</p>
@@ -284,34 +345,12 @@ export default function HomePage() {
 
             <div className="grid md:grid-cols-3 gap-6">
               {featuredPackages.map((pkg, i) => (
-                <Link
+                <PackageCard
                   key={pkg.id}
-                  to="/packages"
-                  className={`group block opacity-0 ${loaded ? 'animate-fade-in-up' : ''}`}
-                  style={{ animationDelay: `${400 + i * 100}ms` }}
-                >
-                  <div className="relative overflow-hidden mb-4">
-                    <img
-                      src={pkg.image}
-                      alt={pkg.name}
-                      className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    {pkg.tag && (
-                      <span className="absolute top-4 left-4 badge badge-coral">
-                        {pkg.tag}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-xl font-medium text-ocean-800 group-hover:text-ocean-600 transition-colors">
-                      {pkg.name}
-                    </h3>
-                    <span className="text-xl font-medium text-ocean-600">
-                      {formatCurrency(pkg.price)}
-                    </span>
-                  </div>
-                  <p className="text-warm-600 text-sm">{pkg.description}</p>
-                </Link>
+                  pkg={pkg}
+                  loaded={loaded}
+                  delay={400 + i * 100}
+                />
               ))}
             </div>
           </div>
@@ -334,6 +373,10 @@ export default function HomePage() {
               <img
                 src={IMAGES.testimonial}
                 alt="Sarah M."
+                width={56}
+                height={56}
+                loading="lazy"
+                decoding="async"
                 className="w-14 h-14 rounded-full object-cover"
               />
               <div className="text-left">
@@ -358,7 +401,7 @@ export default function HomePage() {
             </div>
 
             <div className="flex flex-wrap justify-center gap-4">
-              {['Seacliff State Beach', 'Sunset State Beach', 'Manresa State Beach', 'Rio Del Mar', 'Capitola'].map((beach) => (
+              {beaches.map((beach) => (
                 <div
                   key={beach}
                   className="flex items-center gap-2 px-5 py-3 bg-white border border-sand-200 text-warm-700 text-sm"
@@ -377,6 +420,10 @@ export default function HomePage() {
             <img
               src={IMAGES.luxury}
               alt="Sunset beach scene"
+              width={1600}
+              height={600}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-ocean-900/70" />
@@ -419,7 +466,7 @@ export default function HomePage() {
             </div>
 
             <div className="mt-12 pt-8 border-t border-ocean-800 text-sm">
-              <p>&copy; {new Date().getFullYear()} ShoreReady. All rights reserved.</p>
+              <p>&copy; {currentYear} ShoreReady. All rights reserved.</p>
             </div>
           </div>
         </footer>

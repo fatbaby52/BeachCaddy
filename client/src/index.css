@@ -1,5 +1,5 @@
-/* Google Fonts - must be first */
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Outfit:wght@300;400;500;600;700&display=swap');
+/* Google Fonts - optimized: only needed weights, swap display */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Outfit:wght@400;500;600&display=swap');
 
 @import "tailwindcss";
 
@@ -364,10 +364,16 @@ h1, h2, h3, h4 {
   }
 }
 
-/* Skip link for keyboard users */
+/* Skip link for keyboard users - uses transform to avoid CLS */
 .skip-link {
-  @apply absolute -top-12 left-4 z-50 bg-ocean-700 text-white px-4 py-2;
-  @apply focus:top-4 transition-all;
+  @apply absolute left-4 z-50 bg-ocean-700 text-white px-4 py-2;
+  top: 1rem;
+  transform: translateY(-200%);
+  transition: transform 0.2s ease-out;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
 }
 
 /* Enhanced focus states - visible ring for all interactive elements */

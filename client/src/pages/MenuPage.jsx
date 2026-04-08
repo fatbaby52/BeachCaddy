@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Check, Plus, Minus, ShoppingBag, ChevronDown, ChevronUp } from 'lucide-react'
 import { BackHeader, MobileNav, PageContainer } from '../components/layout'
@@ -6,32 +6,33 @@ import { Button, Badge } from '../components/common'
 import { useCartStore } from '../store/cartStore'
 import { formatCurrency, cn } from '../utils/helpers'
 
-// Real images for packages and items
+// Real images for packages and items - optimized with dimensions
 const IMAGES = {
   // Packages
-  essential: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80',
-  couples: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=600&q=80',
-  family: 'https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=600&q=80',
-  luxury: 'https://images.unsplash.com/photo-1520454974749-611b7248ffdb?w=600&q=80',
-  party: 'https://images.unsplash.com/photo-1528495612343-9ca9f4a4de28?w=600&q=80',
+  essential: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&h=384&fit=crop&q=80',
+  couples: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=600&h=384&fit=crop&q=80',
+  family: 'https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=600&h=384&fit=crop&q=80',
+  luxury: 'https://images.unsplash.com/photo-1520454974749-611b7248ffdb?w=600&h=384&fit=crop&q=80',
+  party: 'https://images.unsplash.com/photo-1528495612343-9ca9f4a4de28?w=600&h=384&fit=crop&q=80',
   // Items
-  canopy: 'https://images.unsplash.com/photo-1531722569936-825d3dd91b15?w=400&q=80',
-  umbrella: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80',
-  chair: 'https://images.unsplash.com/photo-1520942702018-0862200e6873?w=400&q=80',
-  lounger: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400&q=80',
-  blanket: 'https://images.unsplash.com/photo-1515876305430-f06edab8282a?w=400&q=80',
-  towel: 'https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?w=400&q=80',
-  cooler: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80',
-  drinks: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&q=80',
-  snacks: 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400&q=80',
-  speaker: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&q=80',
-  games: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=400&q=80',
-  toys: 'https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=400&q=80',
-  table: 'https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=400&q=80',
-  sunblock: 'https://images.unsplash.com/photo-1556227834-09f1de7a7d14?w=400&q=80',
-  lighting: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=400&q=80',
+  canopy: 'https://images.unsplash.com/photo-1531722569936-825d3dd91b15?w=400&h=224&fit=crop&q=80',
+  umbrella: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=224&fit=crop&q=80',
+  chair: 'https://images.unsplash.com/photo-1520942702018-0862200e6873?w=400&h=224&fit=crop&q=80',
+  lounger: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400&h=224&fit=crop&q=80',
+  blanket: 'https://images.unsplash.com/photo-1515876305430-f06edab8282a?w=400&h=224&fit=crop&q=80',
+  towel: 'https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?w=400&h=224&fit=crop&q=80',
+  cooler: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=224&fit=crop&q=80',
+  drinks: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=224&fit=crop&q=80',
+  snacks: 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=400&h=224&fit=crop&q=80',
+  speaker: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=224&fit=crop&q=80',
+  games: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=400&h=224&fit=crop&q=80',
+  toys: 'https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=400&h=224&fit=crop&q=80',
+  table: 'https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=400&h=224&fit=crop&q=80',
+  sunblock: 'https://images.unsplash.com/photo-1556227834-09f1de7a7d14?w=400&h=224&fit=crop&q=80',
+  lighting: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=400&h=224&fit=crop&q=80',
 }
 
+// Static data defined outside component
 const samplePackages = [
   {
     id: 'pkg-1',
@@ -157,20 +158,32 @@ const categories = [
   { id: 'ENTERTAINMENT', name: 'Fun' },
 ]
 
-// Package Card Component
-function PackageCard({ pkg, isSelected, onSelect }) {
+// Memoized Package Card Component
+const PackageCard = memo(function PackageCard({ pkg, isSelected, onSelect }) {
   const [expanded, setExpanded] = useState(false)
+
+  const handleToggleExpand = useCallback(() => {
+    setExpanded(prev => !prev)
+  }, [])
+
+  const handleSelect = useCallback(() => {
+    onSelect(pkg)
+  }, [onSelect, pkg])
 
   return (
     <div className={cn(
       'overflow-hidden transition-all border-2 bg-white',
       isSelected ? 'border-ocean-500 shadow-lg' : 'border-sand-200'
     )}>
-      <div className="relative">
+      <div className="relative aspect-[25/16]">
         <img
           src={pkg.imageUrl}
           alt={pkg.name}
-          className="w-full h-48 object-cover"
+          width={600}
+          height={384}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover"
         />
         {pkg.tag && (
           <span className="absolute top-3 left-3 badge badge-coral">
@@ -194,7 +207,7 @@ function PackageCard({ pkg, isSelected, onSelect }) {
 
         {/* What's Included */}
         <button
-          onClick={() => setExpanded(!expanded)}
+          onClick={handleToggleExpand}
           className="flex items-center gap-2 text-sm text-ocean-600 font-medium mb-4"
         >
           What's Included
@@ -215,7 +228,7 @@ function PackageCard({ pkg, isSelected, onSelect }) {
         <Button
           fullWidth
           variant={isSelected ? 'outline' : 'primary'}
-          onClick={() => onSelect(pkg)}
+          onClick={handleSelect}
         >
           {isSelected ? (
             <>
@@ -229,31 +242,39 @@ function PackageCard({ pkg, isSelected, onSelect }) {
       </div>
     </div>
   )
-}
+})
 
-// Item Card Component
-function ItemCard({ item }) {
-  const { items, addItem, updateQuantity } = useCartStore()
-  const cartItem = items.find(i => i.id === item.id)
-  const quantity = cartItem?.quantity || 0
-
-  const handleAdd = () => {
-    addItem({
+// Memoized Item Card Component
+const ItemCard = memo(function ItemCard({ item, quantity, onAdd, onUpdateQuantity }) {
+  const handleAdd = useCallback(() => {
+    onAdd({
       id: item.id,
       name: item.name,
       price: item.price,
       imageUrl: item.imageUrl,
       category: item.category,
     })
-  }
+  }, [item, onAdd])
+
+  const handleDecrease = useCallback(() => {
+    onUpdateQuantity(item.id, quantity - 1)
+  }, [item.id, quantity, onUpdateQuantity])
+
+  const handleIncrease = useCallback(() => {
+    onUpdateQuantity(item.id, quantity + 1)
+  }, [item.id, quantity, onUpdateQuantity])
 
   return (
     <div className="overflow-hidden border border-sand-200 bg-white">
-      <div className="relative">
+      <div className="relative aspect-[16/9]">
         <img
           src={item.imageUrl}
           alt={item.name}
-          className="w-full h-28 object-cover"
+          width={400}
+          height={224}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover"
         />
         {quantity > 0 && (
           <div className="absolute top-2 right-2 w-6 h-6 bg-ocean-600 text-white text-xs font-bold flex items-center justify-center">
@@ -277,7 +298,7 @@ function ItemCard({ item }) {
           ) : (
             <div className="flex items-center gap-1">
               <button
-                onClick={() => updateQuantity(item.id, quantity - 1)}
+                onClick={handleDecrease}
                 className="w-7 h-7 bg-sand-200 text-ocean-700 flex items-center justify-center hover:bg-sand-300 transition-colors"
                 aria-label="Decrease quantity"
               >
@@ -285,7 +306,7 @@ function ItemCard({ item }) {
               </button>
               <span className="w-6 text-center text-sm font-medium">{quantity}</span>
               <button
-                onClick={() => updateQuantity(item.id, quantity + 1)}
+                onClick={handleIncrease}
                 className="w-7 h-7 bg-ocean-600 text-white flex items-center justify-center hover:bg-ocean-700 transition-colors"
                 aria-label="Increase quantity"
               >
@@ -297,15 +318,18 @@ function ItemCard({ item }) {
       </div>
     </div>
   )
-}
+})
 
-// Floating Cart Bar
-function FloatingCart() {
+// Memoized Floating Cart Bar
+const FloatingCart = memo(function FloatingCart() {
   const navigate = useNavigate()
-  const { getItemCount, getSubtotal, selectedPackage } = useCartStore()
+  const itemCount = useCartStore(state => state._cachedItemCount || state.getItemCount())
+  const subtotal = useCartStore(state => state._cachedSubtotal || state.getSubtotal())
+  const selectedPackage = useCartStore(state => state.selectedPackage)
 
-  const itemCount = getItemCount()
-  const subtotal = getSubtotal()
+  const handleNavigate = useCallback(() => {
+    navigate('/checkout')
+  }, [navigate])
 
   if (itemCount === 0 && !selectedPackage) return null
 
@@ -322,7 +346,7 @@ function FloatingCart() {
           <span className="font-medium text-lg">{formatCurrency(subtotal)}</span>
         </div>
         <Button
-          onClick={() => navigate('/checkout')}
+          onClick={handleNavigate}
           className="bg-white text-ocean-800 hover:bg-sand-100"
         >
           View Cart
@@ -330,26 +354,42 @@ function FloatingCart() {
       </div>
     </div>
   )
-}
+})
 
 // Main Menu Page
 export default function MenuPage() {
   const [tab, setTab] = useState('packages')
   const [selectedCategory, setSelectedCategory] = useState('all')
-  const { selectedPackage, setPackage, clearPackage } = useCartStore()
+  const selectedPackage = useCartStore(state => state.selectedPackage)
+  const setPackage = useCartStore(state => state.setPackage)
+  const clearPackage = useCartStore(state => state.clearPackage)
+  const items = useCartStore(state => state.items)
+  const addItem = useCartStore(state => state.addItem)
+  const updateQuantity = useCartStore(state => state.updateQuantity)
 
+  // Memoize filtered items
   const filteredItems = useMemo(() => {
     if (selectedCategory === 'all') return sampleItems
     return sampleItems.filter(item => item.category === selectedCategory)
   }, [selectedCategory])
 
-  const handleSelectPackage = (pkg) => {
+  // Memoize quantity lookup
+  const getItemQuantity = useCallback((itemId) => {
+    const cartItem = items.find(i => i.id === itemId)
+    return cartItem?.quantity || 0
+  }, [items])
+
+  // Memoize handlers
+  const handleSelectPackage = useCallback((pkg) => {
     if (selectedPackage?.id === pkg.id) {
       clearPackage()
     } else {
       setPackage(pkg)
     }
-  }
+  }, [selectedPackage, clearPackage, setPackage])
+
+  const handleTabPackages = useCallback(() => setTab('packages'), [])
+  const handleTabItems = useCallback(() => setTab('items'), [])
 
   return (
     <>
@@ -364,7 +404,7 @@ export default function MenuPage() {
             aria-label="Menu options"
           >
             <button
-              onClick={() => setTab('packages')}
+              onClick={handleTabPackages}
               role="tab"
               aria-selected={tab === 'packages'}
               aria-controls="packages-panel"
@@ -379,7 +419,7 @@ export default function MenuPage() {
               Packages
             </button>
             <button
-              onClick={() => setTab('items')}
+              onClick={handleTabItems}
               role="tab"
               aria-selected={tab === 'items'}
               aria-controls="items-panel"
@@ -449,7 +489,13 @@ export default function MenuPage() {
               {/* Items Grid */}
               <div className="grid grid-cols-2 gap-4" role="list" aria-label="Available items">
                 {filteredItems.map((item) => (
-                  <ItemCard key={item.id} item={item} />
+                  <ItemCard
+                    key={item.id}
+                    item={item}
+                    quantity={getItemQuantity(item.id)}
+                    onAdd={addItem}
+                    onUpdateQuantity={updateQuantity}
+                  />
                 ))}
               </div>
             </section>

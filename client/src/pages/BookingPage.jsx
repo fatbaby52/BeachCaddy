@@ -503,8 +503,10 @@ export default function BookingPage() {
     <>
       <BackHeader title="Book Your Setup" />
 
-      <PageContainer>
-        {/* Progress Steps */}
+      <main id="main-content">
+        <PageContainer>
+          {/* Progress Steps - with ARIA for screen readers */}
+          <nav aria-label="Booking progress">
         <div className="mb-10">
           <div className="flex items-center justify-between mb-4">
             {stepTitles.map((title, i) => {
@@ -539,18 +541,28 @@ export default function BookingPage() {
             })}
           </div>
 
-          {/* Progress Bar */}
-          <div className="h-1 bg-sand-200">
+            {/* Progress Bar */}
             <div
-              className="h-full bg-ocean-500 transition-all duration-500"
-              style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
-            />
-          </div>
-        </div>
+              className="h-1 bg-sand-200"
+              role="progressbar"
+              aria-valuenow={currentStep}
+              aria-valuemin={1}
+              aria-valuemax={totalSteps}
+              aria-label={`Step ${currentStep} of ${totalSteps}: ${stepTitles[currentStep - 1]}`}
+            >
+              <div
+                className="h-full bg-ocean-500 transition-all duration-500"
+                style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
+              />
+            </div>
+          </nav>
 
-        {/* Step Content */}
-        {renderStep()}
-      </PageContainer>
+          {/* Step Content */}
+          <section aria-live="polite">
+            {renderStep()}
+          </section>
+        </PageContainer>
+      </main>
 
       <MobileNav />
     </>

@@ -115,7 +115,7 @@ export default function HomePage() {
   return (
     <>
       <Header transparent />
-      <main className="overflow-hidden">
+      <main id="main-content" className="overflow-hidden">
         {/* Hero Section - Editorial Style */}
         <section className="relative min-h-[100svh] -mt-16">
           {/* Background Image */}

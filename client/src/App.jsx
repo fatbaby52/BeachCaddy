@@ -58,6 +58,20 @@ function App() {
   return (
     <BrowserRouter>
       <div className="font-body">
+        {/* Skip link for keyboard accessibility */}
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+
+        {/* Live region for screen reader announcements */}
+        <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          className="live-region"
+          id="live-announcer"
+        />
+
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<HomePage />} />

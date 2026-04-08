@@ -355,12 +355,20 @@ export default function MenuPage() {
     <>
       <BackHeader title="Build Your Setup" />
 
-      <div className="pb-36">
-        {/* Tab Toggle */}
+      <main id="main-content" className="pb-36">
+        {/* Tab Toggle - with proper ARIA roles */}
         <div className="sticky top-14 z-20 bg-sand-50 border-b border-sand-200 px-5 py-4">
-          <div className="flex border border-sand-300 max-w-md mx-auto">
+          <div
+            className="flex border border-sand-300 max-w-md mx-auto"
+            role="tablist"
+            aria-label="Menu options"
+          >
             <button
               onClick={() => setTab('packages')}
+              role="tab"
+              aria-selected={tab === 'packages'}
+              aria-controls="packages-panel"
+              id="packages-tab"
               className={cn(
                 'flex-1 py-3 px-4 text-sm font-medium transition-all',
                 tab === 'packages'
@@ -372,6 +380,10 @@ export default function MenuPage() {
             </button>
             <button
               onClick={() => setTab('items')}
+              role="tab"
+              aria-selected={tab === 'items'}
+              aria-controls="items-panel"
+              id="items-tab"
               className={cn(
                 'flex-1 py-3 px-4 text-sm font-medium transition-all',
                 tab === 'items'
@@ -384,9 +396,14 @@ export default function MenuPage() {
           </div>
         </div>
 
+        {/* Tab Panels */}
         <div className="px-5 pt-6 max-w-xl mx-auto">
           {tab === 'packages' ? (
-            <>
+            <section
+              role="tabpanel"
+              id="packages-panel"
+              aria-labelledby="packages-tab"
+            >
               <p className="text-warm-600 mb-6">
                 Choose a curated package or build your own setup
               </p>
@@ -401,16 +418,21 @@ export default function MenuPage() {
                   />
                 ))}
               </div>
-            </>
+            </section>
           ) : (
-            <>
+            <section
+              role="tabpanel"
+              id="items-panel"
+              aria-labelledby="items-tab"
+            >
               {/* Category Filter */}
-              <div className="overflow-x-auto no-scrollbar -mx-5 px-5 mb-6">
+              <nav aria-label="Item categories" className="overflow-x-auto no-scrollbar -mx-5 px-5 mb-6">
                 <div className="flex gap-2 min-w-max">
                   {categories.map((cat) => (
                     <button
                       key={cat.id}
                       onClick={() => setSelectedCategory(cat.id)}
+                      aria-pressed={selectedCategory === cat.id}
                       className={cn(
                         'px-4 py-2 text-sm font-medium transition-all whitespace-nowrap border',
                         selectedCategory === cat.id
@@ -422,18 +444,18 @@ export default function MenuPage() {
                     </button>
                   ))}
                 </div>
-              </div>
+              </nav>
 
               {/* Items Grid */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4" role="list" aria-label="Available items">
                 {filteredItems.map((item) => (
                   <ItemCard key={item.id} item={item} />
                 ))}
               </div>
-            </>
+            </section>
           )}
         </div>
-      </div>
+      </main>
 
       <FloatingCart />
       <MobileNav />

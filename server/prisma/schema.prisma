@@ -1,0 +1,211 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  passwordHash  String?
+  firstName     String
+  lastName      String
+  phone         String?
+  role          Role         @default(CUSTOMER)
+  supabaseId    String?      @unique
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  bookings      Booking[]
+  favorites     Favorite[]
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+  CREW
+}
+
+model BeachLocation {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  address     String
+  latitude    Float?
+  longitude   Float?
+  imageUrl    String?
+  isActive    Boolean   @default(true)
+  zones       SetupZone[]
+  bookings    Booking[]
+}
+
+model SetupZone {
+  id          String        @id @default(uuid())
+  locationId  String
+  location    BeachLocation @relation(fields: [locationId], references: [id])
+  name        String
+  description String?
+  maxSetups   Int           @default(5)
+  icon        String?
+  bookings    Booking[]
+}
+
+model MenuItem {
+  id          String       @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  imageUrl    String?
+  category    ItemCategory
+  isActive    Boolean      @default(true)
+  isAddOn     Boolean      @default(false)
+  sortOrder   Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  orderItems  OrderItem[]
+  packageItems PackageItem[]
+}
+
+enum ItemCategory {
+  CANOPY
+  UMBRELLA
+  SEATING
+  COMFORT
+  COOLER_ICE
+  FOOD_DRINK
+  ENTERTAINMENT
+  KIDS
+  GAMES
+  ACCESSORIES
+  LIGHTING
+}
+
+model Package {
+  id           String        @id @default(uuid())
+  name         String
+  description  String
+  price        Float
+  imageUrl     String?
+  tag          String?
+  isActive     Boolean       @default(true)
+  sortOrder    Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  items        PackageItem[]
+  bookings     BookingPackage[]
+}
+
+model PackageItem {
+  id         String   @id @default(uuid())
+  packageId  String
+  package    Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  quantity   Int      @default(1)
+}
+
+model Booking {
+  id              String        @id @default(uuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  locationId      String
+  location        BeachLocation @relation(fields: [locationId], references: [id])
+  zoneId          String?
+  zone            SetupZone?    @relation(fields: [zoneId], references: [id])
+  date            DateTime
+  arrivalTime     String
+  endTime         String
+  groupSize       Int
+  specialRequests String?
+  status          BookingStatus @default(PENDING)
+  subtotal        Float
+  serviceFee      Float
+  tax             Float
+  total           Float
+  stripePaymentId String?
+  crewNotes       String?
+  assignedCrewId  String?
+  promoCode       String?
+  discount        Float         @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  packages        BookingPackage[]
+  orderItems      OrderItem[]
+  notifications   Notification[]
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  SETUP_COMPLETE
+  BREAKDOWN
+  COMPLETED
+  CANCELLED
+}
+
+model BookingPackage {
+  id        String  @id @default(uuid())
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  packageId String
+  package   Package @relation(fields: [packageId], references: [id])
+  quantity  Int     @default(1)
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  bookingId  String
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  quantity   Int
+  unitPrice  Float
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  bookingId String
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  bookingId String
+  booking   Booking          @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  message   String
+  sentAt    DateTime         @default(now())
+  read      Boolean          @default(false)
+}
+
+enum NotificationType {
+  BOOKING_CONFIRMED
+  REMINDER
+  SETUP_READY
+  BREAKDOWN_COMPLETE
+  PROMO
+}
+
+model PromoCode {
+  id            String   @id @default(uuid())
+  code          String   @unique
+  discountType  String
+  discountValue Float
+  isActive      Boolean  @default(true)
+  expiresAt     DateTime?
+  maxUses       Int?
+  currentUses   Int      @default(0)
+}
+
+model UnavailableDate {
+  id         String  @id @default(uuid())
+  locationId String?
+  date       DateTime
+  reason     String?
+}

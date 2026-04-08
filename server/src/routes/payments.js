@@ -1,7 +1,12 @@
 const express = require('express')
 const { PrismaClient } = require('@prisma/client')
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const { authMiddleware } = require('../middleware/auth')
+
+// Only initialize Stripe if key is provided and valid
+const stripeKey = process.env.STRIPE_SECRET_KEY
+const stripe = stripeKey && !stripeKey.startsWith('sk_test_placeholder')
+  ? require('stripe')(stripeKey)
+  : null
 
 const router = express.Router()
 const prisma = new PrismaClient()
@@ -12,7 +17,7 @@ router.post('/create-intent', authMiddleware, async (req, res) => {
     const { amount, bookingId } = req.body
 
     // If Stripe is not configured, return mock response
-    if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.startsWith('sk_test_placeholder')) {
+    if (!stripe) {
       return res.json({
         clientSecret: 'mock_client_secret',
         mock: true,
@@ -72,6 +77,10 @@ router.post('/confirm', authMiddleware, async (req, res) => {
 
 // Stripe webhook handler
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!stripe) {
+    return res.status(400).json({ error: 'Stripe not configured' })
+  }
+
   const sig = req.headers['stripe-signature']
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
 

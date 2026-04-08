@@ -220,7 +220,7 @@ export default function HomePage() {
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
-                <Link to="/packages" className="btn-ghost text-white hover:text-sand-200">
+                <Link to="/packages" className="px-5 py-3 font-medium text-white hover:text-sand-200 underline underline-offset-4 transition-all duration-200 inline-flex items-center justify-center">
                   View Packages
                 </Link>
               </div>

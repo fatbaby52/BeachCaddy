@@ -24,6 +24,7 @@ app.use('/api/locations', require('./routes/locations'))
 app.use('/api/promo', require('./routes/promo'))
 app.use('/api/admin', require('./routes/admin'))
 app.use('/api/notifications', require('./routes/notifications'))
+app.use('/api/ai', require('./routes/ai'))
 
 // Health check
 app.get('/api/health', (req, res) => {

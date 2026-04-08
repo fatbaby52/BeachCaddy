@@ -1,6 +1,7 @@
 import { useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from './store/authStore'
+import { ChatBubble } from './components/AIConcierge'
 
 // Loading fallback component
 function PageLoader() {
@@ -159,6 +160,9 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
+
+        {/* AI Concierge floating chat bubble - sitewide */}
+        <ChatBubble />
       </div>
     </BrowserRouter>
   )

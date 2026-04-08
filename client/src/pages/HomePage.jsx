@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Check, Star, MapPin, Frown, Smile } from 'lucide-react'
 import { Header, MobileNav } from '../components/layout'
 import { Button } from '../components/common'
+import { SearchBar } from '../components/AIConcierge'
 import { formatCurrency } from '../utils/helpers'
 
 // Stress-Free Meter Component - memoized
@@ -231,6 +232,17 @@ export default function HomePage() {
                 <div className="w-1.5 h-3 bg-white/60 rounded-full" />
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* AI Concierge Search Bar */}
+        <section className="py-16 md:py-20 px-6 bg-white border-b border-sand-100">
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="eyebrow text-ocean-600 mb-3">Have Questions?</p>
+            <h2 className="text-2xl md:text-3xl text-ocean-800 mb-8" style={{ fontFamily: 'var(--font-display)' }}>
+              Ask our AI Concierge
+            </h2>
+            <SearchBar />
           </div>
         </section>
 

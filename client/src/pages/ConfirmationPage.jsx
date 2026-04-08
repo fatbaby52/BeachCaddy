@@ -97,8 +97,8 @@ END:VCALENDAR`
     if (navigator.share) {
       try {
         await navigator.share(shareData)
-      } catch (err) {
-        console.log('Share cancelled')
+      } catch {
+        // Share was cancelled by user - no action needed
       }
     } else {
       // Fallback: copy to clipboard
@@ -148,7 +148,7 @@ END:VCALENDAR`
           <h1 className="font-display text-3xl text-ocean-700 mb-2">
             You're All Set!
           </h1>
-          <p className="text-gray-600 mb-2">
+          <p className="text-warm-600 mb-2">
             Booking Reference
           </p>
           <p className="text-2xl font-bold text-ocean-600 mb-8">
@@ -215,8 +215,8 @@ END:VCALENDAR`
                   <span className="text-ocean-600 font-bold text-sm">1</span>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-800">Confirmation Email</p>
-                  <p className="text-sm text-gray-600">Check your inbox for booking details</p>
+                  <p className="font-medium text-ocean-800">Confirmation Email</p>
+                  <p className="text-sm text-warm-600">Check your inbox for booking details</p>
                 </div>
               </div>
               <div className="flex gap-3">
@@ -224,8 +224,8 @@ END:VCALENDAR`
                   <span className="text-ocean-600 font-bold text-sm">2</span>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-800">Setup Area Confirmation</p>
-                  <p className="text-sm text-gray-600">We'll confirm your spot 24 hours before</p>
+                  <p className="font-medium text-ocean-800">Setup Area Confirmation</p>
+                  <p className="text-sm text-warm-600">We'll confirm your spot 24 hours before</p>
                 </div>
               </div>
               <div className="flex gap-3">
@@ -233,8 +233,8 @@ END:VCALENDAR`
                   <span className="text-ocean-600 font-bold text-sm">3</span>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-800">Arrive & Enjoy</p>
-                  <p className="text-sm text-gray-600">Your setup will be ready when you get there!</p>
+                  <p className="font-medium text-ocean-800">Arrive & Enjoy</p>
+                  <p className="text-sm text-warm-600">Your setup will be ready when you get there!</p>
                 </div>
               </div>
             </div>

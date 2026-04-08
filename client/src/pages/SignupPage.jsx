@@ -97,7 +97,7 @@ export default function SignupPage() {
       <PageContainer className="pt-4">
         <div className="text-center mb-6">
           <h1 className="font-display text-3xl text-ocean-700 mb-2">Join ShoreReady</h1>
-          <p className="text-gray-600">Create an account to book your beach day</p>
+          <p className="text-warm-600">Create an account to book your beach day</p>
         </div>
 
         <Card className="p-6">
@@ -105,11 +105,11 @@ export default function SignupPage() {
             {/* Name Fields */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-warm-700 mb-1">
                   First Name
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-warm-400" />
                   <input
                     type="text"
                     name="firstName"
@@ -124,7 +124,7 @@ export default function SignupPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-warm-700 mb-1">
                   Last Name
                 </label>
                 <input
@@ -143,11 +143,11 @@ export default function SignupPage() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-warm-700 mb-1">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-warm-400" />
                 <input
                   type="email"
                   name="email"
@@ -164,11 +164,11 @@ export default function SignupPage() {
 
             {/* Phone */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone <span className="text-gray-400">(optional)</span>
+              <label className="block text-sm font-medium text-warm-700 mb-1">
+                Phone <span className="text-warm-400">(optional)</span>
               </label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-warm-400" />
                 <input
                   type="tel"
                   name="phone"
@@ -185,11 +185,11 @@ export default function SignupPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-warm-700 mb-1">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-warm-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
@@ -201,7 +201,7 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-400 hover:text-warm-600"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -213,11 +213,11 @@ export default function SignupPage() {
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-warm-700 mb-1">
                 Confirm Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-warm-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="confirmPassword"
@@ -242,7 +242,7 @@ export default function SignupPage() {
                   onChange={handleChange}
                   className="mt-1 w-4 h-4 text-ocean-500 border-gray-300 rounded focus:ring-ocean-400"
                 />
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-warm-600">
                   I agree to the{' '}
                   <Link to="/terms" className="text-ocean-500 hover:text-ocean-600">
                     Terms of Service
@@ -273,7 +273,7 @@ export default function SignupPage() {
         </Card>
 
         {/* Sign In Link */}
-        <p className="text-center mt-6 text-gray-600">
+        <p className="text-center mt-6 text-warm-600">
           Already have an account?{' '}
           <Link to="/login" className="text-ocean-500 font-medium hover:text-ocean-600">
             Sign In

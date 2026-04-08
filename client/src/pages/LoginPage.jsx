@@ -61,18 +61,18 @@ export default function LoginPage() {
       <PageContainer className="pt-8">
         <div className="text-center mb-8">
           <h1 className="font-display text-3xl text-ocean-700 mb-2">Welcome Back</h1>
-          <p className="text-gray-600">Sign in to manage your reservations</p>
+          <p className="text-warm-600">Sign in to manage your reservations</p>
         </div>
 
         <Card className="p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-warm-700 mb-1">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-warm-400" />
                 <input
                   type="email"
                   name="email"
@@ -89,11 +89,11 @@ export default function LoginPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-warm-700 mb-1">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-warm-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
@@ -105,7 +105,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-400 hover:text-warm-600"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -142,7 +142,7 @@ export default function LoginPage() {
                 <div className="w-full border-t border-sand-200" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-white px-4 text-gray-500">Or continue with</span>
+                <span className="bg-white px-4 text-warm-500">Or continue with</span>
               </div>
             </div>
 
@@ -167,7 +167,7 @@ export default function LoginPage() {
         </Card>
 
         {/* Sign Up Link */}
-        <p className="text-center mt-6 text-gray-600">
+        <p className="text-center mt-6 text-warm-600">
           Don't have an account?{' '}
           <Link to="/signup" className="text-ocean-500 font-medium hover:text-ocean-600">
             Sign Up

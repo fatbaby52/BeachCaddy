@@ -66,7 +66,7 @@ export default function Modal({
                 onClick={onClose}
                 className="p-2 hover:bg-sand-50 rounded-full transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-warm-500" />
               </button>
             )}
           </div>

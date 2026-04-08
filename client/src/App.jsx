@@ -13,6 +13,9 @@ import ConfirmationPage from './pages/ConfirmationPage'
 import AccountPage from './pages/AccountPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
+import AboutPage from './pages/AboutPage'
+import ContactPage from './pages/ContactPage'
+import FAQPage from './pages/FAQPage'
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -83,6 +86,9 @@ function App() {
           <Route path="/confirmation/:bookingId" element={<ConfirmationPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/faq" element={<FAQPage />} />
 
           {/* Protected Routes */}
           <Route

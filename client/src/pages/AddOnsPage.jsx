@@ -154,7 +154,7 @@ export default function AddOnsPage() {
                     'px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap',
                     selectedCategory === cat.id
                       ? 'bg-coral-500 text-white'
-                      : 'bg-sand-100 text-gray-600 hover:bg-sand-200'
+                      : 'bg-sand-100 text-warm-600 hover:bg-sand-200'
                   )}
                 >
                   {cat.name}
@@ -168,7 +168,7 @@ export default function AddOnsPage() {
           <h2 className="font-display text-2xl text-ocean-700 mb-2">
             Make It Even Better
           </h2>
-          <p className="text-gray-600 mb-6">Add a little something extra</p>
+          <p className="text-warm-600 mb-6">Add a little something extra</p>
 
           {/* Items Grid */}
           <div className="grid grid-cols-2 gap-4">

@@ -60,7 +60,7 @@ function BookingCard({ booking, isPast = false }) {
     <Card className="p-4">
       <div className="flex items-start justify-between mb-3">
         <div>
-          <p className="font-mono text-sm text-gray-500">{booking.id}</p>
+          <p className="font-mono text-sm text-warm-500">{booking.id}</p>
           <h4 className="font-display text-lg text-ocean-700">{booking.package}</h4>
         </div>
         <Badge variant={statusColors[booking.status]}>
@@ -68,7 +68,7 @@ function BookingCard({ booking, isPast = false }) {
         </Badge>
       </div>
 
-      <div className="space-y-2 text-sm text-gray-600 mb-4">
+      <div className="space-y-2 text-sm text-warm-600 mb-4">
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-ocean-400" />
           <span>{booking.location}</span>
@@ -145,7 +145,7 @@ export default function AccountPage() {
                 <h2 className="font-display text-xl text-ocean-700">
                   {userData.firstName} {userData.lastName}
                 </h2>
-                <p className="text-gray-500">Member since 2024</p>
+                <p className="text-warm-500">Member since 2024</p>
               </div>
             </div>
             <button
@@ -157,11 +157,11 @@ export default function AccountPage() {
           </div>
 
           <div className="space-y-3 text-sm">
-            <div className="flex items-center gap-3 text-gray-600">
+            <div className="flex items-center gap-3 text-warm-600">
               <Mail className="w-4 h-4 text-ocean-400" />
               <span>{userData.email}</span>
             </div>
-            <div className="flex items-center gap-3 text-gray-600">
+            <div className="flex items-center gap-3 text-warm-600">
               <Phone className="w-4 h-4 text-ocean-400" />
               <span>{userData.phone}</span>
             </div>
@@ -176,7 +176,7 @@ export default function AccountPage() {
               className={`flex-1 py-2 px-4 rounded-full text-sm font-medium transition-colors ${
                 activeTab === 'upcoming'
                   ? 'bg-white text-ocean-600 shadow-sm'
-                  : 'text-gray-600 hover:text-ocean-500'
+                  : 'text-warm-600 hover:text-ocean-500'
               }`}
             >
               Upcoming ({sampleBookings.upcoming.length})
@@ -186,7 +186,7 @@ export default function AccountPage() {
               className={`flex-1 py-2 px-4 rounded-full text-sm font-medium transition-colors ${
                 activeTab === 'past'
                   ? 'bg-white text-ocean-600 shadow-sm'
-                  : 'text-gray-600 hover:text-ocean-500'
+                  : 'text-warm-600 hover:text-ocean-500'
               }`}
             >
               Past ({sampleBookings.past.length})
@@ -205,7 +205,7 @@ export default function AccountPage() {
                   <h3 className="font-display text-lg text-ocean-700 mb-2">
                     No upcoming reservations
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-warm-600 mb-4">
                     Ready for your next beach day?
                   </p>
                   <Button onClick={() => navigate('/book')}>
@@ -226,7 +226,7 @@ export default function AccountPage() {
                   <h3 className="font-display text-lg text-ocean-700 mb-2">
                     No past reservations
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-warm-600">
                     Your booking history will appear here
                   </p>
                 </Card>
@@ -242,7 +242,7 @@ export default function AccountPage() {
               <Star className="w-5 h-5 text-sunset-400" />
               <span className="font-medium text-ocean-700">Saved Favorites</span>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-400" />
+            <ChevronRight className="w-5 h-5 text-warm-400" />
           </div>
         </Card>
 
@@ -264,7 +264,7 @@ export default function AccountPage() {
         onClose={() => setShowLogoutModal(false)}
         title="Sign Out?"
       >
-        <p className="text-gray-600 mb-6">
+        <p className="text-warm-600 mb-6">
           Are you sure you want to sign out of your account?
         </p>
         <div className="flex gap-3">

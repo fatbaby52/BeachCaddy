@@ -1,9 +1,53 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, Star, MapPin } from 'lucide-react'
+import { ArrowRight, Check, Star, MapPin, Frown, Smile } from 'lucide-react'
 import { Header, MobileNav } from '../components/layout'
 import { Button } from '../components/common'
 import { formatCurrency } from '../utils/helpers'
+
+// Stress-Free Meter Component
+function StressFreeMeter({ animated }) {
+  const progress = animated ? 85 : 0 // 85% towards stress-free
+
+  return (
+    <div className="relative">
+      {/* Meter Track */}
+      <div className="relative h-4 bg-sand-200 overflow-hidden">
+        {/* Animated Fill */}
+        <div
+          className="absolute inset-y-0 left-0 bg-gradient-to-r from-coral-400 via-sunset-400 to-ocean-500 transition-all duration-[2000ms] ease-out"
+          style={{ width: `${progress}%` }}
+        />
+        {/* Tick marks */}
+        <div className="absolute inset-0 flex justify-between px-1">
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className="w-px h-full bg-white/30" />
+          ))}
+        </div>
+      </div>
+
+      {/* Labels */}
+      <div className="flex justify-between mt-4">
+        <div className="flex items-center gap-2 text-coral-500">
+          <Frown className="w-5 h-5" />
+          <span className="text-sm font-medium">Stressed</span>
+        </div>
+        <div className="flex items-center gap-2 text-ocean-600">
+          <span className="text-sm font-medium">Stress-Free</span>
+          <Smile className="w-5 h-5" />
+        </div>
+      </div>
+
+      {/* Needle/Indicator */}
+      <div
+        className="absolute -top-2 transition-all duration-[2000ms] ease-out"
+        style={{ left: `${progress}%`, transform: 'translateX(-50%)' }}
+      >
+        <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[12px] border-l-transparent border-r-transparent border-t-ocean-700" />
+      </div>
+    </div>
+  )
+}
 
 // Real beach images from Unsplash
 const IMAGES = {
@@ -43,9 +87,29 @@ const featuredPackages = [
 
 export default function HomePage() {
   const [loaded, setLoaded] = useState(false)
+  const [meterAnimated, setMeterAnimated] = useState(false)
+  const meterRef = useRef(null)
 
   useEffect(() => {
     setLoaded(true)
+  }, [])
+
+  // Intersection observer for meter animation
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setMeterAnimated(true)
+        }
+      },
+      { threshold: 0.5 }
+    )
+
+    if (meterRef.current) {
+      observer.observe(meterRef.current)
+    }
+
+    return () => observer.disconnect()
   }, [])
 
   return (
@@ -157,8 +221,48 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Stress-Free Meter Section */}
+        <section ref={meterRef} className="py-20 md:py-28 px-6 bg-white">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-12">
+              <p className="eyebrow text-coral-500 mb-4">The Difference</p>
+              <h2 className="display-lg text-ocean-800 mb-4">
+                Your stress level
+              </h2>
+              <p className="text-warm-600">
+                Traditional beach prep vs. ShoreReady
+              </p>
+            </div>
+
+            {/* The Meter */}
+            <div className="mb-12">
+              <StressFreeMeter animated={meterAnimated} />
+            </div>
+
+            {/* Comparison Stats */}
+            <div className="grid grid-cols-2 gap-8 pt-8 border-t border-sand-200">
+              <div className="text-center">
+                <p className="text-4xl font-light text-coral-500 mb-2" style={{ fontFamily: 'var(--font-display)' }}>
+                  2.5 hrs
+                </p>
+                <p className="text-sm text-warm-600">
+                  Typical time spent<br />shopping, packing, hauling
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-4xl font-light text-ocean-600 mb-2" style={{ fontFamily: 'var(--font-display)' }}>
+                  0 min
+                </p>
+                <p className="text-sm text-warm-600">
+                  Your prep time<br />with ShoreReady
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Featured Packages - Editorial Grid */}
-        <section className="py-20 md:py-32 px-6 bg-white">
+        <section className="py-20 md:py-32 px-6 bg-sand-50">
           <div className="max-w-5xl mx-auto">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
               <div>

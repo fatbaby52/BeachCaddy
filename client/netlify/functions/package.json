@@ -1,0 +1,8 @@
+{
+  "name": "shoreready-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for ShoreReady",
+  "dependencies": {
+    "openai": "^4.52.0"
+  }
+}

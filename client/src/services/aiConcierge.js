@@ -1,4 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+// Use relative URLs - Netlify redirects handle routing to functions
+const API_BASE = ''
 
 /**
  * Send a message to the AI Concierge
@@ -7,7 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
  * @returns {Promise<{message: string, usage?: object}>}
  */
 export async function sendMessage(messages, context = '') {
-  const response = await fetch(`${API_URL}/api/ai/chat`, {
+  const response = await fetch(`${API_BASE}/api/ai/chat`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -28,7 +29,7 @@ export async function sendMessage(messages, context = '') {
  * @returns {Promise<{suggestions: string[]}>}
  */
 export async function getSuggestions() {
-  const response = await fetch(`${API_URL}/api/ai/suggestions`)
+  const response = await fetch(`${API_BASE}/api/ai/suggestions`)
 
   if (!response.ok) {
     // Return default suggestions if endpoint fails
@@ -52,7 +53,7 @@ export async function getSuggestions() {
  * @returns {Promise<{primary: string, reason: string, alternative: string}>}
  */
 export async function getBeachRecommendation(groupType, preferences = {}) {
-  const response = await fetch(`${API_URL}/api/ai/recommend-beach`, {
+  const response = await fetch(`${API_BASE}/api/ai/recommend-beach`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -13,6 +13,11 @@ export default function CheckoutPage() {
   const [promoLoading, setPromoLoading] = useState(false)
   const [promoError, setPromoError] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
+  const [customerInfo, setCustomerInfo] = useState({
+    name: '',
+    email: '',
+    phone: '',
+  })
 
   const {
     selectedPackage,
@@ -74,14 +79,54 @@ export default function CheckoutPage() {
   }
 
   const handlePlaceOrder = async () => {
+    // Validate customer info
+    if (!customerInfo.name || !customerInfo.email || !customerInfo.phone) {
+      return
+    }
+
     setIsProcessing(true)
 
-    // Simulate payment processing
-    setTimeout(() => {
-      const bookingId = 'SR-' + Math.random().toString(36).substring(2, 8).toUpperCase()
+    const bookingId = 'SR-' + Math.random().toString(36).substring(2, 8).toUpperCase()
+
+    // Prepare booking data for Netlify Forms
+    const bookingData = {
+      'form-name': 'booking',
+      bookingId,
+      customerName: customerInfo.name,
+      customerEmail: customerInfo.email,
+      customerPhone: customerInfo.phone,
+      beach: selectedLocation?.name || '',
+      date: selectedDate ? formatDate(selectedDate) : '',
+      arrivalTime: arrivalTime || '',
+      endTime: endTime || '',
+      groupSize: String(groupSize),
+      zone: selectedZone?.name || 'No preference',
+      package: selectedPackage?.name || 'No package',
+      items: items.map(i => `${i.name} x${i.quantity}`).join(', ') || 'None',
+      subtotal: formatCurrency(subtotal),
+      total: formatCurrency(total),
+      promoCode: promoCode || 'None',
+      specialRequests: specialRequests || 'None',
+    }
+
+    try {
+      // Submit to Netlify Forms
+      await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(bookingData).toString(),
+      })
+
+      // Navigate to confirmation
       navigate(`/confirmation/${bookingId}`)
-    }, 2000)
+    } catch (error) {
+      console.error('Booking submission error:', error)
+      // Still navigate to confirmation (form might still have been submitted)
+      navigate(`/confirmation/${bookingId}`)
+    }
   }
+
+  const isCustomerInfoValid = customerInfo.name && customerInfo.email && customerInfo.phone
 
   const isEmpty = !selectedPackage && items.length === 0
 
@@ -299,6 +344,56 @@ export default function CheckoutPage() {
           </div>
         </Card>
 
+        {/* Customer Information */}
+        <Card className="mb-6 p-4">
+          <h3 className="font-medium text-ocean-700 mb-4">Your Information</h3>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="customerName" className="block text-sm font-medium text-ocean-800 mb-2">
+                Name <span className="text-coral-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="customerName"
+                value={customerInfo.name}
+                onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                placeholder="Your full name"
+                className="input-field"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="customerEmail" className="block text-sm font-medium text-ocean-800 mb-2">
+                Email <span className="text-coral-500">*</span>
+              </label>
+              <input
+                type="email"
+                id="customerEmail"
+                value={customerInfo.email}
+                onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
+                placeholder="your@email.com"
+                className="input-field"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="customerPhone" className="block text-sm font-medium text-ocean-800 mb-2">
+                Phone <span className="text-coral-500">*</span>
+              </label>
+              <input
+                type="tel"
+                id="customerPhone"
+                value={customerInfo.phone}
+                onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
+                placeholder="(555) 555-5555"
+                className="input-field"
+                required
+              />
+              <p className="text-xs text-warm-500 mt-1">We'll text you the setup location</p>
+            </div>
+          </div>
+        </Card>
+
         {/* Payment Section (Placeholder) */}
         <Card className="mb-6 p-4">
           <h3 className="font-medium text-ocean-700 mb-4">Payment</h3>
@@ -317,13 +412,18 @@ export default function CheckoutPage() {
             size="lg"
             onClick={handlePlaceOrder}
             loading={isProcessing}
-            disabled={!hasBookingDetails}
+            disabled={!hasBookingDetails || !isCustomerInfoValid}
           >
             Place Order — {formatCurrency(total)}
           </Button>
           {!hasBookingDetails && (
             <p className="text-center text-sm text-red-500 mt-2">
               Please complete booking details first
+            </p>
+          )}
+          {hasBookingDetails && !isCustomerInfoValid && (
+            <p className="text-center text-sm text-red-500 mt-2">
+              Please fill in your contact information
             </p>
           )}
         </div>

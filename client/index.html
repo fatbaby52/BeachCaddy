@@ -21,12 +21,31 @@
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
   </head>
   <body>
-    <!-- Hidden form for Netlify Forms detection (required for React SPAs) -->
+    <!-- Hidden forms for Netlify Forms detection (required for React SPAs) -->
     <form name="contact" netlify netlify-honeypot="bot-field" hidden>
       <input type="text" name="name" />
       <input type="email" name="email" />
       <input type="text" name="subject" />
       <textarea name="message"></textarea>
+    </form>
+
+    <form name="booking" netlify netlify-honeypot="bot-field" hidden>
+      <input type="text" name="bookingId" />
+      <input type="text" name="customerName" />
+      <input type="email" name="customerEmail" />
+      <input type="tel" name="customerPhone" />
+      <input type="text" name="beach" />
+      <input type="text" name="date" />
+      <input type="text" name="arrivalTime" />
+      <input type="text" name="endTime" />
+      <input type="text" name="groupSize" />
+      <input type="text" name="zone" />
+      <input type="text" name="package" />
+      <input type="text" name="items" />
+      <input type="text" name="subtotal" />
+      <input type="text" name="total" />
+      <input type="text" name="promoCode" />
+      <textarea name="specialRequests"></textarea>
     </form>
 
     <div id="root"></div>

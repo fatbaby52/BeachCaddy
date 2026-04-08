@@ -111,12 +111,42 @@ function LocationStep() {
 function DateStep() {
   const { selectedDate, setDate, nextStep, prevStep } = useBookingStore()
   const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [availability, setAvailability] = useState({})
+  const [loadingAvailability, setLoadingAvailability] = useState(true)
 
   const year = currentMonth.getFullYear()
   const month = currentMonth.getMonth()
   const days = getCalendarDays(year, month)
 
   const monthName = currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+
+  // Fetch availability when month changes
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      setLoadingAvailability(true)
+      try {
+        const startDate = new Date(year, month, 1).toISOString().split('T')[0]
+        const endDate = new Date(year, month + 2, 0).toISOString().split('T')[0] // 2 months ahead
+
+        const response = await fetch(`/api/availability?start=${startDate}&end=${endDate}`)
+        if (response.ok) {
+          const data = await response.json()
+          // Convert to lookup object
+          const lookup = {}
+          data.availability?.forEach(day => {
+            lookup[day.booking_date] = day.slots_available
+          })
+          setAvailability(lookup)
+        }
+      } catch (error) {
+        console.error('Failed to fetch availability:', error)
+      } finally {
+        setLoadingAvailability(false)
+      }
+    }
+
+    fetchAvailability()
+  }, [year, month])
 
   const goToPrevMonth = () => {
     setCurrentMonth(new Date(year, month - 1))
@@ -126,8 +156,22 @@ function DateStep() {
     setCurrentMonth(new Date(year, month + 1))
   }
 
+  const getDateAvailability = (date) => {
+    if (!date) return null
+    const dateStr = date.toISOString().split('T')[0]
+    return availability[dateStr] ?? 2 // Default to 2 if not loaded
+  }
+
+  const isFullyBooked = (date) => {
+    return getDateAvailability(date) === 0
+  }
+
+  const isLimitedAvailability = (date) => {
+    return getDateAvailability(date) === 1
+  }
+
   const selectDate = (date) => {
-    if (date && !isPastDate(date)) {
+    if (date && !isPastDate(date) && !isFullyBooked(date)) {
       setDate(date.toISOString())
     }
   }
@@ -144,6 +188,22 @@ function DateStep() {
           Pick your date
         </h2>
         <p className="text-warm-600">When's your beach day?</p>
+      </div>
+
+      {/* Availability Legend */}
+      <div className="flex items-center justify-center gap-4 mb-4 text-xs">
+        <div className="flex items-center gap-1">
+          <span className="w-3 h-3 bg-ocean-100 border border-ocean-300 rounded-sm"></span>
+          <span className="text-warm-600">Available</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="w-3 h-3 bg-sunset-200 border border-sunset-400 rounded-sm"></span>
+          <span className="text-warm-600">1 spot left</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="w-3 h-3 bg-sand-200 border border-sand-300 rounded-sm"></span>
+          <span className="text-warm-600">Fully booked</span>
+        </div>
       </div>
 
       {/* Calendar Header */}
@@ -176,29 +236,47 @@ function DateStep() {
 
       {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-1 mb-8">
-        {days.map((date, index) => (
-          <button
-            key={index}
-            onClick={() => selectDate(date)}
-            disabled={!date || isPastDate(date)}
-            className={cn(
-              'aspect-square flex items-center justify-center text-sm transition-all min-h-[44px]',
-              !date && 'invisible',
-              date && isPastDate(date) && 'text-sand-300 cursor-not-allowed',
-              date && !isPastDate(date) && !isSelected(date) && 'hover:bg-ocean-50 text-warm-700',
-              date && isToday(date) && !isSelected(date) && 'bg-sand-100 font-medium',
-              isSelected(date) && 'bg-ocean-600 text-white font-semibold'
-            )}
-          >
-            {date?.getDate()}
-          </button>
-        ))}
+        {days.map((date, index) => {
+          const fullyBooked = date && !isPastDate(date) && isFullyBooked(date)
+          const limited = date && !isPastDate(date) && isLimitedAvailability(date)
+
+          return (
+            <button
+              key={index}
+              onClick={() => selectDate(date)}
+              disabled={!date || isPastDate(date) || fullyBooked}
+              className={cn(
+                'aspect-square flex items-center justify-center text-sm transition-all min-h-[44px] relative',
+                !date && 'invisible',
+                date && isPastDate(date) && 'text-sand-300 cursor-not-allowed',
+                date && fullyBooked && 'bg-sand-200 text-sand-400 cursor-not-allowed line-through',
+                date && !isPastDate(date) && !fullyBooked && !isSelected(date) && 'hover:bg-ocean-100 text-warm-700',
+                date && !isPastDate(date) && limited && !isSelected(date) && 'bg-sunset-100 text-sunset-700',
+                date && isToday(date) && !isSelected(date) && !fullyBooked && 'ring-2 ring-ocean-400 font-medium',
+                isSelected(date) && 'bg-ocean-600 text-white font-semibold'
+              )}
+              title={fullyBooked ? 'Fully booked' : limited ? '1 spot left' : ''}
+            >
+              {date?.getDate()}
+              {limited && !isSelected(date) && (
+                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-sunset-500 rounded-full"></span>
+              )}
+            </button>
+          )
+        })}
       </div>
+
+      {loadingAvailability && (
+        <p className="text-center text-sm text-warm-500 mb-4">Checking availability...</p>
+      )}
 
       {selectedDate && (
         <div className="bg-ocean-50 border border-ocean-200 p-4 mb-8">
           <p className="text-ocean-800 font-medium text-center">
             {formatDate(selectedDate)}
+            {isLimitedAvailability(new Date(selectedDate)) && (
+              <span className="block text-sm text-sunset-600 mt-1">Only 1 spot left!</span>
+            )}
           </p>
         </div>
       )}

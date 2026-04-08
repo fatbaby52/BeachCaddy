@@ -86,43 +86,71 @@ export default function CheckoutPage() {
 
     setIsProcessing(true)
 
-    const bookingId = 'SR-' + Math.random().toString(36).substring(2, 8).toUpperCase()
-
-    // Prepare booking data for Netlify Forms
+    // Prepare booking data for API
     const bookingData = {
-      'form-name': 'booking',
-      bookingId,
-      customerName: customerInfo.name,
-      customerEmail: customerInfo.email,
-      customerPhone: customerInfo.phone,
+      customer_name: customerInfo.name,
+      customer_email: customerInfo.email,
+      customer_phone: customerInfo.phone,
       beach: selectedLocation?.name || '',
-      date: selectedDate ? formatDate(selectedDate) : '',
-      arrivalTime: arrivalTime || '',
-      endTime: endTime || '',
-      groupSize: String(groupSize),
-      zone: selectedZone?.name || 'No preference',
-      package: selectedPackage?.name || 'No package',
-      items: items.map(i => `${i.name} x${i.quantity}`).join(', ') || 'None',
-      subtotal: formatCurrency(subtotal),
-      total: formatCurrency(total),
-      promoCode: promoCode || 'None',
-      specialRequests: specialRequests || 'None',
+      booking_date: selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '',
+      arrival_time: arrivalTime || '',
+      end_time: endTime || '',
+      group_size: groupSize,
+      zone_preference: selectedZone?.name || null,
+      package_name: selectedPackage?.name || null,
+      package_price: selectedPackage?.price || null,
+      items: items.map(i => ({ name: i.name, quantity: i.quantity, price: i.price })),
+      subtotal: subtotal,
+      service_fee: serviceFee,
+      tax: tax,
+      discount: discount,
+      promo_code: promoCode || null,
+      total: total,
+      special_requests: specialRequests || null,
+      payment_status: 'pending', // Will update when Stripe is integrated
     }
 
     try {
-      // Submit to Netlify Forms
-      await fetch('/', {
+      // Submit to booking API (saves to Supabase)
+      const response = await fetch('/api/bookings', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(bookingData).toString(),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData),
       })
 
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.message || result.error || 'Booking failed')
+      }
+
+      // Also submit to Netlify Forms as backup notification
+      try {
+        await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            'form-name': 'booking',
+            bookingId: result.bookingId,
+            customerName: customerInfo.name,
+            customerEmail: customerInfo.email,
+            customerPhone: customerInfo.phone,
+            beach: selectedLocation?.name || '',
+            date: selectedDate ? formatDate(selectedDate) : '',
+            total: formatCurrency(total),
+          }).toString(),
+        })
+      } catch (formError) {
+        // Netlify form is backup, don't fail if it errors
+        console.warn('Netlify form backup failed:', formError)
+      }
+
       // Navigate to confirmation
-      navigate(`/confirmation/${bookingId}`)
+      navigate(`/confirmation/${result.bookingId}`)
     } catch (error) {
       console.error('Booking submission error:', error)
-      // Still navigate to confirmation (form might still have been submitted)
-      navigate(`/confirmation/${bookingId}`)
+      alert(error.message || 'Failed to create booking. Please try again.')
+      setIsProcessing(false)
     }
   }
 

@@ -17,6 +17,16 @@
   to = "/.netlify/functions/ai-suggestions"
   status = 200
 
+[[redirects]]
+  from = "/api/availability"
+  to = "/.netlify/functions/get-availability"
+  status = 200
+
+[[redirects]]
+  from = "/api/bookings"
+  to = "/.netlify/functions/create-booking"
+  status = 200
+
 # SPA fallback - must be last
 [[redirects]]
   from = "/*"

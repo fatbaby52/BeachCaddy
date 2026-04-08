@@ -64,7 +64,7 @@ export default function AboutPage() {
                 {
                   icon: Users,
                   title: 'People First',
-                  description: 'Our team genuinely cares about making your day special. It's not just a job, it's our passion.'
+                  description: "Our team genuinely cares about making your day special. It's not just a job, it's our passion."
                 },
               ].map((value, i) => (
                 <div key={i} className="flex gap-4">

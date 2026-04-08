@@ -506,8 +506,7 @@ export default function BookingPage() {
       <main id="main-content">
         <PageContainer>
           {/* Progress Steps - with ARIA for screen readers */}
-          <nav aria-label="Booking progress">
-        <div className="mb-10">
+          <nav aria-label="Booking progress" className="mb-10">
           <div className="flex items-center justify-between mb-4">
             {stepTitles.map((title, i) => {
               const StepIcon = stepIcons[i]

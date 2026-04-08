@@ -35,6 +35,15 @@
   --color-sunset-400: #F5A855;
   --color-sunset-500: #E08A2E;
 
+  /* Warm tinted neutrals */
+  --color-warm-900: #2A2418;
+  --color-warm-800: #3D3529;
+  --color-warm-700: #524A3A;
+  --color-warm-600: #6B6050;
+  --color-warm-500: #8A7E6A;
+  --color-warm-400: #A89E8C;
+  --color-warm-300: #C7BFAF;
+
   /* Typography - Editorial feel */
   --font-display: 'Fraunces', serif;
   --font-body: 'Outfit', sans-serif;
@@ -57,15 +66,6 @@ h1, h2, h3, h4 {
   font-weight: 500;
   letter-spacing: -0.02em;
 }
-
-/* Warm tinted text colors instead of gray */
-.text-warm-900 { color: #2A2418; }
-.text-warm-800 { color: #3D3529; }
-.text-warm-700 { color: #524A3A; }
-.text-warm-600 { color: #6B6050; }
-.text-warm-500 { color: #8A7E6A; }
-.text-warm-400 { color: #A89E8C; }
-.text-warm-300 { color: #C7BFAF; }
 
 /* Component styles - Bold, confident, distinctive */
 .btn-primary {

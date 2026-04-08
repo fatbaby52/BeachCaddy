@@ -25,20 +25,20 @@ const faqs = [
     category: 'Setup & Equipment',
     questions: [
       {
-        q: 'What time will my setup be ready?',
-        a: 'Your beach setup will be ready and waiting at least 15 minutes before your scheduled arrival time. We'll send you the exact location via text message.'
+        q: "What time will my setup be ready?",
+        a: "Your beach setup will be ready and waiting at least 15 minutes before your scheduled arrival time. We'll send you the exact location via text message."
       },
       {
-        q: 'What's included in the packages?',
-        a: 'Each package includes different items—check the package details for specifics. Generally, our Essential package includes an umbrella, chairs, cooler with ice, towels, and sunblock. Premium packages add canopies, loungers, speakers, and more.'
+        q: "What's included in the packages?",
+        a: "Each package includes different items—check the package details for specifics. Generally, our Essential package includes an umbrella, chairs, cooler with ice, towels, and sunblock. Premium packages add canopies, loungers, speakers, and more."
       },
       {
-        q: 'What if something is damaged or not working?',
-        a: 'Just call us! We'll replace any equipment issues within 30 minutes. Our team is always nearby to help.'
+        q: "What if something is damaged or not working?",
+        a: "Just call us! We'll replace any equipment issues within 30 minutes. Our team is always nearby to help."
       },
       {
-        q: 'Do I need to pack up at the end?',
-        a: 'Nope! Just leave everything where it is when you're done. Our crew will handle all the breakdown and cleanup—that's the whole point!'
+        q: "Do I need to pack up at the end?",
+        a: "Nope! Just leave everything where it is when you're done. Our crew will handle all the breakdown and cleanup—that's the whole point!"
       },
     ]
   },
@@ -63,16 +63,16 @@ const faqs = [
     category: 'Weather & Policies',
     questions: [
       {
-        q: 'What happens if the weather is bad?',
-        a: 'If we need to cancel due to severe weather (storms, dangerous conditions), you'll receive a full refund or can reschedule for free. Light overcast or typical beach weather is not considered severe.'
+        q: "What happens if the weather is bad?",
+        a: "If we need to cancel due to severe weather (storms, dangerous conditions), you'll receive a full refund or can reschedule for free. Light overcast or typical beach weather is not considered severe."
       },
       {
-        q: 'What's your pet policy?',
-        a: 'We're pet-friendly! Just let us know in the special requests if you're bringing a furry friend. Note that some beaches have specific pet rules.'
+        q: "What's your pet policy?",
+        a: "We're pet-friendly! Just let us know in the special requests if you're bringing a furry friend. Note that some beaches have specific pet rules."
       },
       {
-        q: 'Can I bring my own food and drinks?',
-        a: 'Absolutely! Our coolers come stocked with ice, but you're welcome to bring your own food and beverages. We also offer add-on snack packs and drink packages.'
+        q: "Can I bring my own food and drinks?",
+        a: "Absolutely! Our coolers come stocked with ice, but you're welcome to bring your own food and beverages. We also offer add-on snack packs and drink packages."
       },
     ]
   },

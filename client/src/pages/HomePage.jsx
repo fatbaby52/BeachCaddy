@@ -1,292 +1,322 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MapPin, Umbrella, PlusCircle, Glasses, ChevronRight, Star, ArrowDown } from 'lucide-react'
-import { Header, MobileNav, PageContainer } from '../components/layout'
-import { Button, Card, CardImage, CardBody, Badge } from '../components/common'
+import { ArrowRight, Check, Star, MapPin } from 'lucide-react'
+import { Header, MobileNav } from '../components/layout'
+import { Button } from '../components/common'
 import { formatCurrency } from '../utils/helpers'
 
-// Sample packages for the preview (will be fetched from API)
-const samplePackages = [
+// Real beach images from Unsplash
+const IMAGES = {
+  hero: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80',
+  heroSecondary: 'https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&q=80',
+  beachSetup: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&q=80',
+  couples: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=800&q=80',
+  family: 'https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=800&q=80',
+  luxury: 'https://images.unsplash.com/photo-1520454974749-611b7248ffdb?w=800&q=80',
+  testimonial: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80',
+}
+
+const featuredPackages = [
   {
     id: '1',
-    name: 'Basic Beach Day',
+    name: 'Essential',
     price: 89,
-    tag: null,
-    description: 'Everything you need for a simple, perfect beach day.',
-    imageUrl: null,
+    description: 'Umbrella, 2 chairs, cooler with ice, towels',
+    image: IMAGES.beachSetup,
   },
   {
     id: '2',
-    name: 'Couples Relaxation',
+    name: 'Couples Retreat',
     price: 149,
-    tag: 'Most Popular',
-    description: 'Premium comfort for two with all the extras.',
-    imageUrl: null,
+    tag: 'Popular',
+    description: 'Premium loungers, canopy, speaker, drinks included',
+    image: IMAGES.couples,
   },
   {
     id: '3',
-    name: 'Family Fun',
+    name: 'Family Day',
     price: 199,
-    tag: 'Best Value',
-    description: 'Room for the whole family plus games and snacks.',
-    imageUrl: null,
+    description: 'Large canopy, 4 chairs, games, snacks, toy set',
+    image: IMAGES.family,
   },
 ]
 
-const steps = [
-  { icon: MapPin, title: 'Pick Your Beach', description: 'Choose from our partner locations' },
-  { icon: Umbrella, title: 'Choose Your Package', description: 'Select the perfect setup' },
-  { icon: PlusCircle, title: 'Add Your Extras', description: 'Customize with add-ons' },
-  { icon: Glasses, title: 'Show Up & Chill', description: 'We handle the rest' },
-]
-
 export default function HomePage() {
-  const [meterAnimated, setMeterAnimated] = useState(false)
-  const meterRef = useRef(null)
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setMeterAnimated(true)
-        }
-      },
-      { threshold: 0.5 }
-    )
-
-    if (meterRef.current) {
-      observer.observe(meterRef.current)
-    }
-
-    return () => observer.disconnect()
+    setLoaded(true)
   }, [])
 
   return (
     <>
       <Header transparent />
-      <main className="pb-20">
-        {/* Hero Section */}
-        <section className="relative h-[85vh] min-h-[600px] flex items-center justify-center overflow-hidden -mt-16">
-          {/* Gradient Background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-ocean-400 via-ocean-300 to-sunset-400" />
-
-          {/* Wave Pattern Overlay */}
-          <div className="absolute inset-0 opacity-10">
-            <svg viewBox="0 0 1440 320" className="absolute bottom-0 w-full">
-              <path
-                fill="white"
-                d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-              />
-            </svg>
+      <main className="overflow-hidden">
+        {/* Hero Section - Editorial Style */}
+        <section className="relative min-h-[100svh] -mt-16">
+          {/* Background Image */}
+          <div className="absolute inset-0">
+            <img
+              src={IMAGES.hero}
+              alt="Beautiful sandy beach with crystal clear water"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-ocean-900/80 via-ocean-900/20 to-transparent" />
           </div>
 
           {/* Content */}
-          <div className="relative z-10 text-center px-6 max-w-xl mx-auto">
-            <h1 className="font-display text-4xl md:text-5xl text-white mb-4 leading-tight">
-              Your Perfect Beach Day, Set Up and Waiting
-            </h1>
-            <p className="text-xl text-white/90 mb-8">
-              We bring everything. You bring the good vibes.
-            </p>
-            <Link to="/book">
-              <Button size="lg" className="shadow-lg bg-white text-ocean-500 hover:bg-sand-50">
-                Book Your Beach Setup
-              </Button>
-            </Link>
-
-            {/* Scroll Indicator */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator">
-              <ArrowDown className="w-6 h-6 text-white/80" />
-            </div>
-          </div>
-        </section>
-
-        {/* How It Works */}
-        <section className="py-16 px-4 bg-sand-50">
-          <div className="max-w-lg mx-auto">
-            <h2 className="font-display text-3xl text-ocean-700 text-center mb-10">
-              How It Works
-            </h2>
-
-            <div className="overflow-x-auto no-scrollbar -mx-4 px-4">
-              <div className="flex gap-4 min-w-max md:grid md:grid-cols-4 md:min-w-0">
-                {steps.map(({ icon: Icon, title, description }, index) => (
-                  <div
-                    key={title}
-                    className="flex flex-col items-center text-center w-40 md:w-auto flex-shrink-0"
-                  >
-                    <div className="w-16 h-16 rounded-full bg-ocean-100 flex items-center justify-center mb-4">
-                      <Icon className="w-8 h-8 text-ocean-500" />
-                    </div>
-                    <div className="text-sm font-semibold text-ocean-300 mb-1">
-                      Step {index + 1}
-                    </div>
-                    <h3 className="font-display text-lg text-ocean-700 mb-1">{title}</h3>
-                    <p className="text-sm text-gray-600">{description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Stress-Free Meter */}
-        <section ref={meterRef} className="py-16 px-4">
-          <div className="max-w-lg mx-auto text-center">
-            <h2 className="font-display text-3xl text-ocean-700 mb-8">
-              The Stress-Free Meter
-            </h2>
-
-            {/* Animated Gauge */}
-            <div className="relative w-64 h-32 mx-auto mb-8">
-              <svg viewBox="0 0 200 100" className="w-full">
-                {/* Background arc */}
-                <path
-                  d="M 20 100 A 80 80 0 0 1 180 100"
-                  fill="none"
-                  stroke="#FDECD3"
-                  strokeWidth="20"
-                  strokeLinecap="round"
-                />
-                {/* Gradient arc */}
-                <defs>
-                  <linearGradient id="meterGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#E76F51" />
-                    <stop offset="50%" stopColor="#F4A261" />
-                    <stop offset="100%" stopColor="#219EBC" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d="M 20 100 A 80 80 0 0 1 180 100"
-                  fill="none"
-                  stroke="url(#meterGradient)"
-                  strokeWidth="20"
-                  strokeLinecap="round"
-                  strokeDasharray="251"
-                  strokeDashoffset={meterAnimated ? '0' : '251'}
-                  style={{ transition: 'stroke-dashoffset 2s ease-out' }}
-                />
-                {/* Labels */}
-                <text x="25" y="95" className="text-xs fill-coral-500 font-medium">
-                  Stressed
-                </text>
-                <text x="135" y="95" className="text-xs fill-ocean-500 font-medium">
-                  Stress Free
-                </text>
-              </svg>
-
-              {/* Needle */}
-              <div
-                className="absolute left-1/2 bottom-0 w-1 h-20 bg-ocean-700 rounded-full origin-bottom"
-                style={{
-                  transform: `translateX(-50%) rotate(${meterAnimated ? '45deg' : '-45deg'})`,
-                  transition: 'transform 2s ease-out',
-                }}
+          <div className="relative z-10 min-h-[100svh] flex flex-col justify-end px-6 pb-24 pt-32">
+            <div className="max-w-2xl">
+              <p
+                className={`eyebrow text-sand-200 mb-4 opacity-0 ${loaded ? 'animate-fade-in-up' : ''}`}
               >
-                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 bg-ocean-700 rounded-full" />
+                Beach Concierge Service
+              </p>
+
+              <h1
+                className={`display-xl text-white mb-6 opacity-0 ${loaded ? 'animate-fade-in-up delay-100' : ''}`}
+              >
+                Your beach day,
+                <br />
+                <span className="text-sunset-300">effortlessly perfect</span>
+              </h1>
+
+              <p
+                className={`text-xl text-sand-100 mb-10 max-w-md leading-relaxed opacity-0 ${loaded ? 'animate-fade-in-up delay-200' : ''}`}
+              >
+                We set up everything before you arrive. Umbrellas, chairs, coolers, snacks—just show up and relax.
+              </p>
+
+              <div
+                className={`flex flex-col sm:flex-row gap-4 opacity-0 ${loaded ? 'animate-fade-in-up delay-300' : ''}`}
+              >
+                <Link to="/book">
+                  <Button size="lg" className="w-full sm:w-auto bg-white text-ocean-800 hover:bg-sand-100">
+                    Book Your Setup
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+                <Link to="/packages" className="btn-ghost text-white hover:text-sand-200">
+                  View Packages
+                </Link>
               </div>
             </div>
 
-            <p className="text-lg text-gray-700 mb-2">
-              Average time saved: <strong className="text-ocean-600">2.5 hours</strong>
-            </p>
-            <p className="text-sm text-gray-500">
-              of shopping, loading, hauling, and setting up
-            </p>
+            {/* Scroll indicator */}
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator">
+              <div className="w-6 h-10 border-2 border-white/40 rounded-full flex justify-center pt-2">
+                <div className="w-1.5 h-3 bg-white/60 rounded-full" />
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Featured Packages */}
-        <section className="py-16 px-4 bg-sand-50">
-          <div className="max-w-lg mx-auto">
-            <h2 className="font-display text-3xl text-ocean-700 text-center mb-8">
-              Featured Packages
-            </h2>
+        {/* Value Prop - Simple, Not Carded */}
+        <section className="py-20 md:py-32 px-6 bg-sand-50">
+          <div className="max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-16 items-center">
+              <div>
+                <p className="eyebrow text-ocean-600 mb-4">How It Works</p>
+                <h2 className="display-lg text-ocean-800 mb-8">
+                  Skip the hassle.
+                  <br />
+                  Keep the memories.
+                </h2>
+                <div className="divider mb-8" />
 
-            <div className="overflow-x-auto no-scrollbar -mx-4 px-4">
-              <div className="flex gap-4 min-w-max">
-                {samplePackages.map((pkg) => (
-                  <Card key={pkg.id} elevated className="w-72 flex-shrink-0">
-                    <CardImage
-                      src={pkg.imageUrl}
+                <div className="space-y-8">
+                  {[
+                    { num: '01', title: 'Choose your beach & time', desc: 'We serve the best spots on the coast' },
+                    { num: '02', title: 'Pick your setup', desc: 'From basic essentials to full luxury' },
+                    { num: '03', title: 'Show up and chill', desc: "Everything's ready when you arrive" },
+                  ].map((step, i) => (
+                    <div key={i} className="flex gap-6">
+                      <span className="text-4xl font-light text-sand-300">{step.num}</span>
+                      <div>
+                        <h3 className="text-lg font-medium text-ocean-800 mb-1">{step.title}</h3>
+                        <p className="text-warm-600">{step.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative">
+                <img
+                  src={IMAGES.heroSecondary}
+                  alt="Beach setup with umbrella and chairs"
+                  className="w-full aspect-[4/5] object-cover"
+                />
+                {/* Stats overlay */}
+                <div className="absolute -bottom-8 -left-4 md:-left-8 bg-white p-6 shadow-dramatic">
+                  <p className="text-5xl font-light text-ocean-700 mb-1">2.5h</p>
+                  <p className="text-sm text-warm-600">Average time saved<br />per beach trip</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Featured Packages - Editorial Grid */}
+        <section className="py-20 md:py-32 px-6 bg-white">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
+              <div>
+                <p className="eyebrow text-coral-500 mb-4">Packages</p>
+                <h2 className="display-lg text-ocean-800">
+                  Find your perfect
+                  <br />
+                  beach setup
+                </h2>
+              </div>
+              <Link
+                to="/packages"
+                className="mt-6 md:mt-0 text-ocean-600 font-medium flex items-center gap-2 hover:gap-3 transition-all"
+              >
+                View all packages
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {featuredPackages.map((pkg, i) => (
+                <Link
+                  key={pkg.id}
+                  to="/packages"
+                  className={`group block opacity-0 ${loaded ? 'animate-fade-in-up' : ''}`}
+                  style={{ animationDelay: `${400 + i * 100}ms` }}
+                >
+                  <div className="relative overflow-hidden mb-4">
+                    <img
+                      src={pkg.image}
                       alt={pkg.name}
-                      className="h-40"
+                      className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <CardBody>
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-display text-xl text-ocean-700">{pkg.name}</h3>
-                        {pkg.tag && (
-                          <Badge variant={pkg.tag === 'Most Popular' ? 'coral' : 'ocean'}>
-                            {pkg.tag}
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-600 mb-3">{pkg.description}</p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xl font-bold text-ocean-600">
-                          {formatCurrency(pkg.price)}
-                        </span>
-                        <Link to="/packages">
-                          <Button size="sm">View Package</Button>
-                        </Link>
-                      </div>
-                    </CardBody>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Buttons */}
-        <section className="py-12 px-4">
-          <div className="max-w-lg mx-auto space-y-4">
-            <Link to="/book" className="block">
-              <Button fullWidth size="lg" rightIcon={<ChevronRight className="w-5 h-5" />}>
-                Book Your Beach Setup
-              </Button>
-            </Link>
-            <Link to="/packages" className="block">
-              <Button fullWidth size="lg" variant="secondary" rightIcon={<ChevronRight className="w-5 h-5" />}>
-                Browse Packages
-              </Button>
-            </Link>
-            <Link to="/add-ons" className="block">
-              <Button fullWidth size="lg" variant="coral" rightIcon={<ChevronRight className="w-5 h-5" />}>
-                View Add-Ons
-              </Button>
-            </Link>
-          </div>
-        </section>
-
-        {/* Testimonial */}
-        <section className="py-16 px-4 bg-ocean-50">
-          <div className="max-w-lg mx-auto text-center">
-            <div className="flex justify-center gap-1 mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-6 h-6 fill-sunset-400 text-sunset-400" />
+                    {pkg.tag && (
+                      <span className="absolute top-4 left-4 badge badge-coral">
+                        {pkg.tag}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-xl font-medium text-ocean-800 group-hover:text-ocean-600 transition-colors">
+                      {pkg.name}
+                    </h3>
+                    <span className="text-xl font-medium text-ocean-600">
+                      {formatCurrency(pkg.price)}
+                    </span>
+                  </div>
+                  <p className="text-warm-600 text-sm">{pkg.description}</p>
+                </Link>
               ))}
             </div>
-            <blockquote className="font-display text-2xl text-ocean-700 italic mb-4">
-              "Best beach day ever. We just showed up and everything was perfect."
-            </blockquote>
-            <p className="text-gray-600">— Sarah M., Monterey</p>
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="py-8 px-4 bg-ocean-700 text-white">
-          <div className="max-w-lg mx-auto text-center">
-            <h3 className="font-display text-2xl mb-4">ShoreReady</h3>
-            <p className="text-ocean-200 mb-6">Beach setups made effortless</p>
-            <div className="flex justify-center gap-6 text-sm text-ocean-200">
-              <Link to="/about" className="hover:text-white transition-colors">About Us</Link>
-              <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
-              <Link to="/faq" className="hover:text-white transition-colors">FAQ</Link>
+        {/* Testimonial - Full Width */}
+        <section className="py-20 md:py-32 px-6 bg-ocean-800">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="flex justify-center gap-1 mb-8">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-5 h-5 fill-sunset-400 text-sunset-400" />
+              ))}
             </div>
-            <p className="text-ocean-300 text-sm mt-8">
-              © 2024 ShoreReady. All rights reserved.
+
+            <blockquote className="text-3xl md:text-4xl text-white font-light leading-snug mb-10" style={{ fontFamily: 'var(--font-display)' }}>
+              "We arrived to find everything set up perfectly. The kids ran straight to the water while we relaxed under the canopy. Best beach day we've ever had."
+            </blockquote>
+
+            <div className="flex items-center justify-center gap-4">
+              <img
+                src={IMAGES.testimonial}
+                alt="Sarah M."
+                className="w-14 h-14 rounded-full object-cover"
+              />
+              <div className="text-left">
+                <p className="text-white font-medium">Sarah Mitchell</p>
+                <p className="text-ocean-300 text-sm">Monterey, CA</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Locations Preview */}
+        <section className="py-20 md:py-32 px-6 bg-sand-50">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <p className="eyebrow text-ocean-600 mb-4">Locations</p>
+              <h2 className="display-lg text-ocean-800 mb-4">
+                Serving California's finest beaches
+              </h2>
+              <p className="text-warm-600 max-w-lg mx-auto">
+                From Santa Cruz to Monterey, we know the best spots—and we'll make sure you get the perfect setup.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-4">
+              {['Seacliff State Beach', 'Sunset State Beach', 'Manresa State Beach', 'Rio Del Mar', 'Capitola'].map((beach) => (
+                <div
+                  key={beach}
+                  className="flex items-center gap-2 px-5 py-3 bg-white border border-sand-200 text-warm-700 text-sm"
+                >
+                  <MapPin className="w-4 h-4 text-ocean-500" />
+                  {beach}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section className="relative py-32 px-6">
+          <div className="absolute inset-0">
+            <img
+              src={IMAGES.luxury}
+              alt="Sunset beach scene"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-ocean-900/70" />
+          </div>
+
+          <div className="relative z-10 max-w-2xl mx-auto text-center">
+            <h2 className="display-lg text-white mb-6">
+              Ready for your
+              <br />
+              perfect beach day?
+            </h2>
+            <p className="text-xl text-sand-200 mb-10">
+              Book now and let us handle everything.
             </p>
+            <Link to="/book">
+              <Button size="lg" className="bg-white text-ocean-800 hover:bg-sand-100">
+                Book Your Setup
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </section>
+
+        {/* Footer - Minimal */}
+        <footer className="py-12 px-6 bg-ocean-900 text-ocean-300">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+              <div>
+                <h3 className="text-2xl text-white mb-2" style={{ fontFamily: 'var(--font-display)' }}>
+                  ShoreReady
+                </h3>
+                <p className="text-sm">Beach setups made effortless</p>
+              </div>
+
+              <div className="flex gap-8 text-sm">
+                <Link to="/about" className="hover:text-white transition-colors">About</Link>
+                <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>
+                <Link to="/faq" className="hover:text-white transition-colors">FAQ</Link>
+              </div>
+            </div>
+
+            <div className="mt-12 pt-8 border-t border-ocean-800 text-sm">
+              <p>&copy; {new Date().getFullYear()} ShoreReady. All rights reserved.</p>
+            </div>
           </div>
         </footer>
       </main>

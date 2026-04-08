@@ -24,7 +24,7 @@ export default function Card({
 
 export function CardImage({ src, alt, placeholder = true, className = '' }) {
   return (
-    <div className={cn('overflow-hidden rounded-t-xl', className)}>
+    <div className={cn('overflow-hidden', className)}>
       {src ? (
         <img
           src={src}
@@ -35,15 +35,16 @@ export function CardImage({ src, alt, placeholder = true, className = '' }) {
       ) : placeholder ? (
         <div className="w-full h-full img-placeholder flex items-center justify-center">
           <svg
-            className="w-12 h-12 text-white/60"
+            className="w-10 h-10 text-sand-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={1.5}
+              strokeWidth={1}
               d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
             />
           </svg>
@@ -54,12 +55,12 @@ export function CardImage({ src, alt, placeholder = true, className = '' }) {
 }
 
 export function CardBody({ children, className = '' }) {
-  return <div className={cn('p-4', className)}>{children}</div>
+  return <div className={cn('p-5', className)}>{children}</div>
 }
 
 export function CardFooter({ children, className = '' }) {
   return (
-    <div className={cn('px-4 pb-4 pt-0', className)}>
+    <div className={cn('px-5 pb-5 pt-0', className)}>
       {children}
     </div>
   )

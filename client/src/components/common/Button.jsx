@@ -10,8 +10,8 @@ const variants = {
 }
 
 const sizes = {
-  sm: 'px-4 py-2 text-sm',
-  md: 'px-6 py-3 text-base',
+  sm: 'px-4 py-2.5 text-sm',
+  md: 'px-6 py-3.5 text-base',
   lg: 'px-8 py-4 text-lg',
 }
 
@@ -33,6 +33,7 @@ export default function Button({
         variants[variant],
         sizes[size],
         fullWidth && 'w-full',
+        'focus-ring',
         className
       )}
       disabled={disabled || loading}
@@ -42,9 +43,9 @@ export default function Button({
         <LoadingSpinner size="sm" />
       ) : (
         <>
-          {leftIcon && <span className="mr-2">{leftIcon}</span>}
+          {leftIcon && <span className="mr-2 -ml-1">{leftIcon}</span>}
           {children}
-          {rightIcon && <span className="ml-2">{rightIcon}</span>}
+          {rightIcon && <span className="ml-2 -mr-1">{rightIcon}</span>}
         </>
       )}
     </button>
